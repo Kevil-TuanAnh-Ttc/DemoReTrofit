@@ -29,17 +29,33 @@ public class MainActivity extends AppCompatActivity {
 
         JsonPlaceHolderApi service = retrofit.create(JsonPlaceHolderApi.class);
 
-        Call<List<Post>> callApi = service.getPost();
+        //1 DÙng GET
+        // kind 1
+        // getPost(service);
+
+        // kind 2: request có điều kiên
+        // getPostComment(service);
+
+        //kind 3: request theo userId
+        //  getPostUserId(service);
+
+        // Dùng POST
+        getPostTest(service);
+
+    }
+
+    private void getPostUserId(JsonPlaceHolderApi service) {
+        Call<List<Post>> callApi = service.getPostUserId(2);
         callApi.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                if (!response.isSuccessful()){
+                if (!response.isSuccessful()) {
                     txtValue.setText("Code" + response.code());
                     return;
                 }
 
                 List<Post> posts = response.body();
-                for (Post post: posts){
+                for (Post post : posts) {
                     String content = "";
                     content += "ID: " + post.getId() + "\n";
                     content += "User ID: " + post.getUserId() + "\n";
@@ -52,6 +68,96 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Post>> call, Throwable t) {
+                txtValue.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getPostComment(JsonPlaceHolderApi service) {
+        Call<List<CommentTest>> callApi = service.getPostComment(4);
+        callApi.enqueue(new Callback<List<CommentTest>>() {
+            @Override
+            public void onResponse(Call<List<CommentTest>> call, Response<List<CommentTest>> response) {
+                if (!response.isSuccessful()) {
+                    txtValue.setText("Code" + response.code());
+                    return;
+                }
+
+                List<CommentTest> commentTests = response.body();
+                for (CommentTest commentTest : commentTests) {
+                    String content = "";
+                    content += "ID: " + commentTest.getId() + "\n";
+                    content += "Name: " + commentTest.getName() + "\n";
+                    content += "Body: " + commentTest.getBody() + "\n";
+                    content += "Email: " + commentTest.getEmail() + "\n";
+                    content += "postId: " + commentTest.getPostId() + "\n\n";
+                    txtValue.append(content);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CommentTest>> call, Throwable t) {
+                txtValue.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getPost(JsonPlaceHolderApi service) {
+        Call<List<Post>> callApi = service.getPost();
+        callApi.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (!response.isSuccessful()) {
+                    txtValue.setText("Code" + response.code());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+                for (Post post : posts) {
+                    String content = "";
+                    content += "ID: " + post.getId() + "\n";
+                    content += "User ID: " + post.getUserId() + "\n";
+                    content += "Title: " + post.getTitle() + "\n";
+                    content += "Text: " + post.getText() + "\n\n";
+                    txtValue.append(content);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                txtValue.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getPostTest(JsonPlaceHolderApi service) {
+        Post post = new Post(23, "New Title", "New Text");
+        Call<Post> callApi = service.getPostTest(post);
+        callApi.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()) {
+                    txtValue.setText("Code" + response.code());
+                    return;
+                }
+
+                Post postsRepon = response.body();
+
+                String content = "";
+                content += "Code: " + response.code() + "\n";
+                content += "ID: " + postsRepon.getId() + "\n";
+                content += "User ID: " + postsRepon.getUserId() + "\n";
+                content += "Title: " + postsRepon.getTitle() + "\n";
+                content += "Text: " + postsRepon.getText() + "\n\n";
+                txtValue.setText(content);
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
                 txtValue.setText(t.getMessage());
             }
         });
